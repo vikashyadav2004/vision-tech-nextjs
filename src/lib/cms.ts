@@ -1,14 +1,14 @@
 import { cache } from 'react'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { defaultDesign, defaultHomeLayout, defaultSettings } from './defaults'
+import { defaultDesign, defaultSettings } from './defaults'
+import { fetchWpHomepage, mapWpSectionsToBlocks } from './wpHomepage'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Any = any
 
 export const getClient = cache(() => getPayload({ config }))
 
-/** URL of an upload field value (populated doc, or a plain /images path from defaults). */
 export const mediaUrl = (m: Any): string => {
   if (!m) return ''
   if (typeof m === 'string') return m.startsWith('/') || m.startsWith('http') ? m : ''
@@ -17,7 +17,6 @@ export const mediaUrl = (m: Any): string => {
 
 export const str = (v: unknown, d = ''): string => (typeof v === 'string' && v.trim() !== '' ? v : d)
 
-/** Fills empty values in `data` from `fallback` (one level of objects deep). */
 function withFallback<T extends Record<string, Any>>(data: Any, fallback: T): T {
   const out: Record<string, Any> = { ...fallback }
   for (const key of Object.keys(fallback)) {
@@ -51,8 +50,21 @@ export const getDesign = cache(async () => {
   }
 })
 
-/** A page by slug. Drafts are only returned for logged-in editors (live preview). */
 export async function getPage(slug: string, draft: boolean) {
+  if (slug === 'home' && !draft) {
+    const wp = await fetchWpHomepage()
+    if (!wp?.sections?.length) {
+      return null
+    }
+    return {
+      id: wp.page?.id,
+      title: wp.page?.title ?? '',
+      slug: wp.page?.slug ?? 'home',
+      updatedAt: wp.page?.modified_gmt ?? '',
+      layout: mapWpSectionsToBlocks(wp.sections),
+    } as Any
+  }
+
   try {
     const p = await getClient()
     const res = await p.find({
@@ -63,12 +75,9 @@ export async function getPage(slug: string, draft: boolean) {
       depth: 2,
       overrideAccess: draft,
     })
-    const page = res.docs[0]
-    if (page) return page as Any
+    return (res.docs[0] as Any) ?? null
   } catch (e) {
     console.error('[cms] page query failed', e)
+    return null
   }
-  // Before the CMS has content, the homepage still renders the original design.
-  if (slug === 'home') return { title: 'Home', slug: 'home', layout: defaultHomeLayout, updatedAt: 'defaults' }
-  return null
 }

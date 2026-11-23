@@ -1,6 +1,5 @@
 import { Fragment } from 'react'
 import { getClient, mediaUrl, str, type Any } from '@/lib/cms'
-import { defaultEvents, defaultPosts, defaultProducts } from '@/lib/defaults'
 import { bgUrl, Buttons, SectionHead, sectionProps, v } from '../Section'
 
 function Check() {
@@ -11,19 +10,41 @@ function Check() {
   )
 }
 
+/** Normalizes `starter-2-2` `data` or already-mapped `b` props into `Solutions` fields. */
+function normalizeSolutions(b: Any) {
+  const src = b?.data && typeof b.data === 'object' ? b.data : b
+  const rawItems = Array.isArray(src?.items) ? src.items : []
+
+  const items = rawItems.map((item: Any) => ({
+    title: item?.title ?? '',
+    text: item?.text ?? item?.description ?? '',
+    cta: {
+      label: item?.cta?.label ?? item?.buttonText ?? '',
+      href: item?.cta?.href ?? item?.buttonUrl ?? '#',
+    },
+    image: item?.image ?? item?.imageUrl ?? '',
+  }))
+
+  return {
+    tag: src?.tag ?? src?.eyebrow ?? '',
+    heading: src?.heading ?? '',
+    intro: src?.intro ?? src?.description ?? '',
+    items,
+  }
+}
+
 /* ---------------- Hero ---------------- */
 export async function Hero({ b }: { b: Any }) {
-  let fp: Any = b.featuredProduct
-  if (typeof fp === 'string' || !fp) fp = defaultProducts.find((p) => p.name === (fp || 'Pendar X10')) ?? defaultProducts[1]
+  const fp: Any = typeof b.featuredProduct === 'object' && b.featuredProduct ? b.featuredProduct : null
   const sp = sectionProps(b.settings, { className: 'hero' })
 
   return (
-    <header {...sp} style={{ ...sp.style, ...v({ '--haz': bgUrl(mediaUrl(b.background)) }) }}>
+    <header {...sp} style={{ ...sp.style, ...v({ '--haz': bgUrl(mediaUrl(b.imageUrl)) }) }}>
       <div className="w">
         <div className="hc">
           {b.pillText ? (
             <a className="pill2" href={b.pillHref || '#'}>
-              {b.badge ? <b>{b.badge}</b> : null}
+              {b.badge ? <b>{b.badge}</b> : <b>New</b>}
               {b.pillText}
               <span>→</span>
             </a>
@@ -89,17 +110,19 @@ export async function Hero({ b }: { b: Any }) {
                 </span>
               ) : null}
             </div>
-            <div className="tl e" style={v({ '--i': 4 })}>
-              <div className="pim">
-                <img src={mediaUrl(fp.image)} alt={fp.name} />
+            {fp ? (
+              <div className="tl e" style={v({ '--i': 4 })}>
+                <div className="pim">
+                  <img src={mediaUrl(fp.image)} alt={fp.name || ''} />
+                </div>
+                <div>
+                  {b.featuredLabel ? <small>{b.featuredLabel}</small> : null}
+                  {fp.name ? <b>{fp.name}</b> : null}
+                  {fp.summary ? <span>{fp.summary}</span> : null}
+                  <a href="#products">{str(b.featuredLinkLabel, 'Learn more')} →</a>
+                </div>
               </div>
-              <div>
-                <small>{b.featuredLabel}</small>
-                <b>{fp.name}</b>
-                <span>{fp.summary}</span>
-                <a href="#products">{str(b.featuredLinkLabel, 'Learn more')} →</a>
-              </div>
-            </div>
+            ) : null}
           </div>
         ) : null}
 
@@ -139,12 +162,15 @@ export function Statement({ b }: { b: Any }) {
 
 /* ---------------- Solutions (stacked cards) ---------------- */
 export function Solutions({ b }: { b: Any }) {
+  if (b?.enabled === false) return null
+  const { tag, heading, intro, items } = normalizeSolutions(b)
+
   return (
     <section {...sectionProps(b.settings, { style: { paddingTop: 20 } })}>
       <div className="w">
-        <SectionHead tag={b.tag} heading={b.heading} />
+        <SectionHead tag={tag} heading={heading} intro={intro || undefined} />
         <div className="stk" style={{ marginTop: 60 }}>
-          {(b.items ?? []).map((s: Any, i: number) => (
+          {items.map((s: Any, i: number) => (
             <article className="c" style={v({ '--i': i })} key={i}>
               <div className="t">
                 <h3>{s.title}</h3>
@@ -206,15 +232,16 @@ export function Marquee({ b }: { b: Any }) {
 /* ---------------- Products ---------------- */
 export async function Products({ b }: { b: Any }) {
   let items: Any[] = []
-  if (b.source === 'selected') {
+  if (Array.isArray(b.items) && b.items.length) {
+    items = b.items
+  } else if (b.source === 'selected') {
     items = (b.selected ?? []).filter((p: Any) => p && typeof p === 'object')
   } else {
     try {
       const p = await getClient()
       const res = await p.find({ collection: 'products', sort: 'sortOrder', limit: b.limit || 3, depth: 1 })
       items = res.docs
-    } catch {}
-    if (!items.length) items = defaultProducts.slice(0, b.limit || 3)
+    } catch { }
   }
 
   return (
@@ -225,7 +252,7 @@ export async function Products({ b }: { b: Any }) {
           {items.map((p: Any, i: number) => (
             <div className="pc tilt rv" style={i ? v({ '--i': i }) : undefined} key={i}>
               <div className="st">
-                <img src={mediaUrl(p.image)} alt={p.name} />
+                <img src={mediaUrl(p.image)} alt={p.name || ''} />
               </div>
               <h3>{p.name}</h3>
               <p>{p.summary}</p>
@@ -286,19 +313,20 @@ export function Steps({ b }: { b: Any }) {
 
 /* ---------------- News & events ---------------- */
 export async function News({ b }: { b: Any }) {
-  let posts: Any[] = []
-  let events: Any[] = []
-  try {
-    const p = await getClient()
-    const [po, ev] = await Promise.all([
-      p.find({ collection: 'posts', sort: 'sortOrder', limit: b.postsLimit || 3, depth: 1 }),
-      b.showEvents !== false ? p.find({ collection: 'events', sort: 'sortOrder', limit: 20 }) : null,
-    ])
-    posts = po.docs
-    events = ev?.docs ?? []
-  } catch {}
-  if (!posts.length) posts = defaultPosts.slice(0, b.postsLimit || 3)
-  if (b.showEvents !== false && !events.length) events = defaultEvents
+  let posts: Any[] = Array.isArray(b.posts) ? b.posts : []
+  let events: Any[] = Array.isArray(b.events) ? b.events : []
+
+  if (!posts.length || (b.showEvents !== false && !events.length)) {
+    try {
+      const p = await getClient()
+      const [po, ev] = await Promise.all([
+        !posts.length ? p.find({ collection: 'posts', sort: 'sortOrder', limit: b.postsLimit || 3, depth: 1 }) : null,
+        b.showEvents !== false && !events.length ? p.find({ collection: 'events', sort: 'sortOrder', limit: 20 }) : null,
+      ])
+      if (po?.docs?.length) posts = po.docs
+      if (ev?.docs?.length) events = ev.docs
+    } catch { }
+  }
 
   return (
     <section {...sectionProps(b.settings, { style: { paddingTop: 20 } })}>

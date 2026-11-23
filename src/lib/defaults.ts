@@ -1,17 +1,10 @@
-/**
- * The original design's content. Used by:
- *  - the seed script (to fill the CMS), and
- *  - the site as a fallback when the CMS is empty, so nothing ever renders blank.
- * Images are given as /images/... paths; the seed swaps them for uploaded media.
- */
-
 export type Link = { label: string; href: string }
 
 export const IMG = {
-  fire: '/images/fire.jpg',
+  fire: 'https://myclientwebsite.com/headless/wp-content/uploads/2026/11/Teledyne-FLIR-StormCaster-E-Flying-1.jpg',
   work: '/images/work.jpg',
   screening: '/images/screening.jpg',
-  hazmat: '/images/hazmat.jpg',
+  hazmat: 'https://myclientwebsite.com/headless/wp-content/uploads/2026/11/DSC_8944.jpg',
   logo: '/images/logo.png',
   pendar: '/images/pendar-x10.jpg',
   hovermap: '/images/hovermap-st.jpg',
@@ -27,34 +20,34 @@ export const defaultSettings = {
   navLinks: [
     { label: 'Solutions', href: '/#solutions' },
     { label: 'CBRNE', href: '/#spectrum' },
-    { label: 'Products', href: '/#products' },
+    { label: 'Products', href: '/products' },
     { label: 'How it works', href: '/#how' },
-    { label: 'News', href: '/#news' },
+    { label: 'News', href: '/news' },
   ],
-  navCta: { label: 'Request a quote', href: '/#contact' },
+  navCta: { label: 'Contact Visiontec', href: '/contact' },
   address: 'Georgetown, ON L7G 4X6\nCanada',
   footerColumns: [
     {
       heading: 'Solutions',
       links: [
-        { label: 'Community safety', href: '/#solutions' },
-        { label: 'Premises safety', href: '/#solutions' },
-        { label: 'Event screening', href: '/#solutions' },
+        { label: 'Keep my community safe Vikas', href: '/products' },
+        { label: 'Keep my premises safe', href: '/products' },
+        { label: 'Screen my event', href: '/contact' },
       ],
     },
     {
       heading: 'Explore',
       links: [
-        { label: 'Products', href: '/#products' },
+        { label: 'Products', href: '/products' },
         { label: 'How it works', href: '/#how' },
-        { label: 'News and events', href: '/#news' },
+        { label: 'News and events', href: '/news' },
       ],
     },
     {
       heading: 'Support',
       links: [
-        { label: 'Contact', href: '/#contact' },
-        { label: 'Rental form', href: '#' },
+        { label: 'Contact Visiontec', href: '/contact' },
+        { label: 'Rental form', href: '/rental-form' },
         { label: 'LinkedIn', href: '#' },
       ],
     },
@@ -82,9 +75,9 @@ export const defaultDesign = {
 }
 
 export const defaultProducts = [
-  { name: 'HoverMap ST', summary: 'Fast situational mapping for responders.', image: IMG.hovermap, ctaLabel: 'Learn more', ctaHref: '#contact' },
-  { name: 'Pendar X10', summary: 'Handheld identification from a safe distance.', image: IMG.pendar, ctaLabel: 'Learn more', ctaHref: '#contact' },
-  { name: 'XplorIR', summary: 'Portable chemical identification for the field.', image: IMG.xplorir, ctaLabel: 'Learn more', ctaHref: '#contact' },
+  { name: 'HoverMap ST', summary: 'Fast situational mapping for responders.', image: IMG.hovermap, ctaLabel: 'Learn more', ctaHref: '/products' },
+  { name: 'Pendar X10', summary: 'Handheld identification from a safe distance.', image: IMG.pendar, ctaLabel: 'Learn more', ctaHref: '/products' },
+  { name: 'XplorIR', summary: 'Portable chemical identification for the field.', image: IMG.xplorir, ctaLabel: 'Learn more', ctaHref: '/products' },
 ]
 
 export const defaultPosts = [
@@ -92,21 +85,21 @@ export const defaultPosts = [
     title: 'How to detect the hidden danger of lithium-ion battery fires',
     excerpt: 'Lithium-ion battery fires are a growing public safety concern.',
     image: IMG.newsLithium,
-    href: '#',
+    href: '/news',
     linkLabel: 'Read more',
   },
   {
     title: '5 factors to keep in mind when renting security equipment for public events',
     excerpt: 'Set your attendee screening procedure early.',
     image: IMG.newsEvents,
-    href: '#',
+    href: '/news',
     linkLabel: 'Read more',
   },
   {
     title: 'Shielding the seas: why we need to protect naval vessels from CBRN threats',
     excerpt: 'Naval platforms are often deployed to dangerous environments.',
     image: IMG.newsNaval,
-    href: '#',
+    href: '/news',
     linkLabel: 'Read more',
   },
 ]
@@ -119,63 +112,63 @@ export const defaultEvents = [
 
 const anchor = (id: string) => ({ background: 'default', spacing: 'default', anchor: id, hidden: false })
 
-/** The original homepage, section by section, in page-builder form. */
 export const defaultHomeLayout = [
   {
+    id: 'starter-1-1',
     blockType: 'hero',
-    background: IMG.hazmat,
+    background: 'https://myclientwebsite.com/headless/wp-content/uploads/2026/11/DSC_8944.jpg',
     badge: 'New',
     pillText: 'Explore our latest detection products',
-    pillHref: '#products',
+    pillHref: '/products',
     titleLine1: 'The most advanced CBRNE',
     titleLine2: 'detection technology.',
     subtitle:
       'Detect, identify, protect. Equipment for detection, identification, measurement and surveillance, to buy or rent, with expert guidance from our team.',
-    primaryCta: { label: 'View products', href: '#products' },
-    secondaryCta: { label: 'Talk to an expert', href: '#contact' },
+    primaryCta: { label: 'View products', href: '/products' },
+    secondaryCta: { label: 'Talk to an expert', href: '/contact' },
     showGrid: true,
-    tileCommunity: { label: 'Keep my community safe', image: IMG.fire },
+    tileCommunity: {
+      label: 'Keep my community safe Vikas',
+      image: 'https://myclientwebsite.com/headless/wp-content/uploads/2026/11/Teledyne-FLIR-StormCaster-E-Flying-1.jpg',
+    },
     signalTitle: 'Live threat signal',
-    tileCbrne: { label: 'CBRNE detection', image: IMG.hazmat },
+    tileCbrne: { label: 'CBRNE detection', image: 'https://myclientwebsite.com/headless/wp-content/uploads/2026/11/DSC_8944.jpg' },
     tilePremises: { label: 'Keep my premises safe', image: IMG.work },
     featuredLabel: 'Featured product',
     featuredLinkLabel: 'Learn more',
-    featuredProduct: 'Pendar X10', // seed resolves this name to the product
+    featuredProduct: 'Pendar X10',
     features: ['Complete CBRNE range', 'Buy or rent', 'Expert guidance', 'Event screening'].map((text) => ({ text })),
     settings: anchor(''),
   },
   {
-    blockType: 'statement',
-    text: 'When you need to be ready for the unimaginable, you need chemical, biological, radiological, nuclear and explosive equipment that delivers superior threat protection.',
-    settings: anchor(''),
-  },
-  {
+    id: 'starter-2-2',
     blockType: 'solutions',
     tag: 'Solutions',
     heading: 'Protection built around where you work.',
     items: [
       {
-        title: 'Keep my community safe',
+        title: 'Keep my community safe Vikas',
         text: 'The entire spectrum of CBRNE products for detection, identification, measurement and surveillance.',
-        cta: { label: 'View products', href: '#products' },
-        image: IMG.fire,
+        cta: { label: 'View products', href: '/products' },
+        image: 'https://myclientwebsite.com/headless/wp-content/uploads/2026/11/Teledyne-FLIR-StormCaster-E-Flying-1.jpg',
       },
       {
         title: 'Keep my premises safe',
         text: 'Integrated security solutions that protect people and critical infrastructure, from body scanners to x-ray systems.',
-        cta: { label: 'View products', href: '#products' },
+        cta: { label: 'View products', href: '/products' },
         image: IMG.work,
       },
       {
         title: 'Screen my event',
-        text: 'Rent screening or detection equipment for a temporary event, from international summits to entertainment venues.',
-        cta: { label: 'Contact us', href: '#contact' },
+        text: 'Rent screening or detection equipment for a temporary event.',
+        cta: { label: 'Contact us', href: '/contact' },
         image: IMG.screening,
       },
     ],
     settings: anchor('solutions'),
   },
   {
+    id: 'starter-3-3',
     blockType: 'spectrum',
     tag: 'The full spectrum',
     heading: 'Every CBRNE threat. One partner.',
@@ -190,29 +183,18 @@ export const defaultHomeLayout = [
     settings: anchor('spectrum'),
   },
   {
-    blockType: 'marquee',
-    row1: ['Detect', 'Identify', 'Protect', 'Screen'].map((word) => ({ word })),
-    row2: ['Chemical', 'Biological', 'Radiological', 'Nuclear', 'Explosive'].map((word) => ({ word })),
-    settings: anchor(''),
-  },
-  {
+    id: 'starter-4-4',
     blockType: 'products',
     tag: 'Products',
     heading: 'Discover our latest products.',
     intro: 'Innovative tools for detection, identification, screening and surveillance.',
     source: 'all',
     limit: 3,
+    items: defaultProducts,
     settings: anchor('products'),
   },
   {
-    blockType: 'banner',
-    heading: 'Reduce CBRNE threats with the most advanced technology.',
-    text: 'All the products you need to protect your team and facilities from a variety of threats.',
-    cta: { label: 'Contact us', href: '#contact' },
-    image: IMG.hazmat,
-    settings: anchor(''),
-  },
-  {
+    id: 'starter-5-5',
     blockType: 'steps',
     tag: 'How it works',
     heading: 'From first call to field-ready.',
@@ -225,20 +207,24 @@ export const defaultHomeLayout = [
     settings: anchor('how'),
   },
   {
+    id: 'starter-6-6',
     blockType: 'news',
     tag: 'News and events',
     heading: 'Insights from the field.',
     postsLimit: 3,
     showEvents: true,
+    posts: defaultPosts,
+    events: defaultEvents,
     settings: anchor('news'),
   },
   {
+    id: 'starter-7-7',
     blockType: 'contact',
     heading: 'Be ready for the unimaginable.',
     text: 'Tell us what you need to protect. Our team will guide you to the right equipment, to buy or to rent.',
     buttons: [
-      { label: 'Contact Visiontec', href: '#' },
-      { label: 'Rental form', href: '#' },
+      { label: 'Contact Visiontec', href: '/contact' },
+      { label: 'Rental form', href: '/rental-form' },
     ],
     settings: anchor('contact'),
   },
